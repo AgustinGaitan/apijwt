@@ -12,5 +12,5 @@
 
     $app = AppFactory::create();
 
-    $app->post('/login[/]', Verificadora::class . ':VerificarUsuario');  
+    $app->post('/login[/]', Verificadora::class . ':VerificarUsuario')->add(Verificadora::class . ':ValidarParametrosUsuario');  
     $app->run();

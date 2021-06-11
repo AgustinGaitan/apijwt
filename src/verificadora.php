@@ -39,7 +39,7 @@ use Slim\Psr7\Response as ResponseMW;
 
         }
 
-        static function ExisteUsuario ($obj){
+        public static function ExisteUsuario ($obj){
 
             $objAccesoDatos = AccesoDatos::NuevoObjetoAcceso();
 
@@ -59,12 +59,56 @@ use Slim\Psr7\Response as ResponseMW;
             {
                 echo $e->getMessage();
             }
-            
-            
-            
-
         }
 
+        public function ValidarParametrosUsuario(Request $request, RequestHandler $handler) :  ResponseMW {
+
+            $params = $request->getParsedBody();
+            $responseMW = new ResponseMW();
+            $rtaJson = new stdClass();
+            $rtaJson->mensaje = 'Error.';
+            $rtaJson->status = 403;
+
+            if(isset($params['obj_json']))
+            {
+                
+                $jsonAtr = json_decode($params['obj_json']);
+                if(isset($jsonAtr->clave))
+                {
+                    if(isset($jsonAtr->correo))
+                    {
+                        $response = $handler->handle($request);
+                        $responseMW->withStatus($response->getStatusCode());
+                        $responseMW->getBody()->write((string)$response->getBody());
+
+                        return $responseMW;
+                    }
+                    else
+                    {
+                        $rtaJson->mensaje = 'Error. No existe el parametro correo';
+                    }
+                }
+                else
+                {
+                    $rtaJson->mensaje = 'Error. No existe el parametro clave';
+                }   
+                
+            }
+            else 
+            {
+           
+                $rtaJson->mensaje = 'Error. No existe el parametro obj json';
+     
+            }
+               
+            $responseMW->withStatus(403);
+
+            $responseMW->getBody()->write(json_encode($rtaJson));
+
+            return $responseMW;
+        }
+        
+        
 
 
 
