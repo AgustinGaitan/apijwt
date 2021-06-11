@@ -107,6 +107,40 @@ use Slim\Psr7\Response as ResponseMW;
 
             return $responseMW;
         }
+
+        public function ObtenerDataJWT(Request $request ,Response $response, array $args) : Response {
+        
+            $rtaJson = new stdClass();
+            $rtaJson->exito= false;
+            $rtaJson->payload= null;
+            $rtaJson->mensaje = "";
+            $newResponse = $response->withStatus(403);
+            
+
+            $token = $request->getHeader('token')[0];
+        
+
+            $datos = Autentificadora::ObtenerPayLoad($token);
+
+            if($datos->exito) {
+
+                $rtaJson->exito= true;
+                $rtaJson->payload= $datos->payload;
+                $rtaJson->mensaje = $datos->mensaje;
+                $newResponse = $response->withStatus(200);
+                
+            }
+            
+            
+            $newResponse->getBody()->write(json_encode($rtaJson));
+
+            return $newResponse->withHeader('Content-Type' , 'application/json');
+        }
+
+        
+            
+            
+           
         
         
 
