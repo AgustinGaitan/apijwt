@@ -13,5 +13,5 @@
     $app = AppFactory::create();
 
     $app->post('/login[/]', Verificadora::class . ':VerificarUsuario')->add(Verificadora::class . ':ValidarParametrosUsuario');  
-    $app->get('/login/test', Verificadora::class . ':ObtenerDataJWT');
+    $app->get('/login/test', Verificadora::class . ':ObtenerDataJWT')->add(Verificadora::class . ':ChequearJWT');
     $app->run();

@@ -111,11 +111,7 @@ use Slim\Psr7\Response as ResponseMW;
         public function ObtenerDataJWT(Request $request ,Response $response, array $args) : Response {
         
             $rtaJson = new stdClass();
-            $rtaJson->exito= false;
-            $rtaJson->payload= null;
-            $rtaJson->mensaje = "";
             $newResponse = $response->withStatus(403);
-            
 
             $token = $request->getHeader('token')[0];
         
@@ -137,15 +133,37 @@ use Slim\Psr7\Response as ResponseMW;
             return $newResponse->withHeader('Content-Type' , 'application/json');
         }
 
-        
-            
-            
+        public function ChequearJWT(Request $request, RequestHandler $handler) :  ResponseMW {
+
+            $rtaJson = new stdClass();
+            $rtaJson->exito = false;
+            $rtaJson->mensaje = 'Error middleware';
+            $responseMW = new ResponseMW();
+            $encabezado = $request->getHeader('token')[0];
+
+            if(isset($encabezado)){
+                
+                $verificar = Autentificadora::VerificarJWT($encabezado);
+
+                if($verificar->verificado){
+
+                    $response = $handler->handle($request);
+                    $responseMW->withStatus($response->getStatusCode());
+                    $responseMW->getBody()->write((string)$response->getBody());
+                    return $responseMW;
+
+                }
+            }
+
+            $responseMW->withStatus(403);
+
+            $responseMW->getBody()->write(json_encode($rtaJson));
+
+            return $responseMW;
+             
+        }
            
-        
-        
-
-
-
+    
     
     }
 
