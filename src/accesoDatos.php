@@ -12,7 +12,7 @@ class AccesoDatos
             $usuario = "root";
             $clave = "";
 
-            $this->_objetoPDO = new PDO('mysql:host=localhost;dbname=usuarios_bd;charset=utf8', $usuario, $clave);
+            $this->_objetoPDO = new PDO('mysql:host=localhost;dbname=cdcol;charset=utf8', $usuario, $clave);
  
         } catch (PDOException $e) {
  
@@ -20,6 +20,11 @@ class AccesoDatos
  
             die();
         }
+    }
+
+    public function RetornarUltimoIdInsertado()
+    { 
+        return $this->_objetoPDO->lastInsertId(); 
     }
 
     public static function NuevoObjetoAcceso()

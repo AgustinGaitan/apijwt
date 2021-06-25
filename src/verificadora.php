@@ -139,11 +139,11 @@ use Slim\Psr7\Response as ResponseMW;
             $rtaJson->exito = false;
             $rtaJson->mensaje = 'Error middleware';
             $responseMW = new ResponseMW();
-            $encabezado = $request->getHeader('token')[0];
+            $encabezado = $request->getHeader('token');
 
-            if(isset($encabezado)){
+            if(isset($encabezado[0])){
                 
-                $verificar = Autentificadora::VerificarJWT($encabezado);
+                $verificar = Autentificadora::VerificarJWT($encabezado[0]);
 
                 if($verificar->verificado){
 
@@ -153,6 +153,14 @@ use Slim\Psr7\Response as ResponseMW;
                     return $responseMW;
 
                 }
+                else
+                {
+                    $rtaJson->mensaje = 'No esta verificado el token';
+                }
+            }
+            else
+            {
+                $rtaJson->mensaje = 'No esta seteado el token';
             }
 
             $responseMW->withStatus(403);
